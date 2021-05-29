@@ -38,6 +38,7 @@ class ViewController: UIViewController {
                 // MARK: Promotes section layout
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
                 
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.92), heightDimension: .estimated(300))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
@@ -56,7 +57,7 @@ class ViewController: UIViewController {
     // MARK: Инициализируем dataSource
     func configureDataSource() {
         dataSource = .init(collectionView: collectionView, cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
-            // определяем секцию и затем ячейку для нее
+            // Определяем секцию и затем ячейку для нее
             let section = self.sections[indexPath.section]
             switch section {
             case .promoted:
@@ -77,6 +78,8 @@ class ViewController: UIViewController {
         
         dataSource.apply(snapshot)
     }
+    
+
     
     
 }
