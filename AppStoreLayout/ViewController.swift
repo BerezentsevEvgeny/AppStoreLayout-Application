@@ -14,15 +14,15 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Применяем CollectionView layout
+        // Set CollectionView layout
         collectionView.collectionViewLayout = createLayout()
         
-        // Регистрируем SupplementaryItems
+        // Registering SupplementaryItems
         collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: SupplementaryViewKind.header, withReuseIdentifier: SectionHeaderView.reuseIdentifier)
         collectionView.register(LineView.self, forSupplementaryViewOfKind: SupplementaryViewKind.topLine, withReuseIdentifier: LineView.reuseIdentifier)
         collectionView.register(LineView.self, forSupplementaryViewOfKind: SupplementaryViewKind.bottomLine, withReuseIdentifier: LineView.reuseIdentifier)
         
-        // Регистрируем Cells
+        // Registering Cells
         collectionView.register(PromotedAppCollectionViewCell.self, forCellWithReuseIdentifier: PromotedAppCollectionViewCell.reuseIdentifier)
         collectionView.register(StandardAppCollectionViewCell.self, forCellWithReuseIdentifier: StandardAppCollectionViewCell.reuseIdentifier)
         collectionView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.reuseIdentifier)
@@ -31,15 +31,15 @@ class ViewController: UIViewController {
         
     }
     
-    // MARK: - Создаем Layout
+    // MARK: - Creating Layout
     func createLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnviroment) -> NSCollectionLayoutSection? in
             
-            // Конфигурация Header для .standard и .categories
+            // Configuring Header for .standard and .categories
             let headerItemsize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.92), heightDimension: .estimated(44))
             let headerItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerItemsize, elementKind: SupplementaryViewKind.header, alignment: .top)
             
-            // Конфигурируем Line Items
+            // Configuring Line Items
             let lineItemHeight = 1 / layoutEnviroment.traitCollection.displayScale
             let lineItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.92), heightDimension: .absolute(lineItemHeight))
             
@@ -84,7 +84,7 @@ class ViewController: UIViewController {
    
                 let section = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .groupPagingCentered
-                // Применяем header к данной секции
+                // Header for section
                 section.boundarySupplementaryItems = [headerItem,bottomLineItem]
                 section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 0, bottom: 20, trailing: 0)
                 return section
@@ -96,7 +96,7 @@ class ViewController: UIViewController {
                     heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                // Вычисляем отступ от края экрана
+                // Configure inset
                 let availableLayoutWidth = layoutEnviroment.container.effectiveContentSize.width
                 let groupWidth = availableLayoutWidth * 0.92
                 let remainingWidth = availableLayoutWidth - groupWidth
@@ -112,7 +112,7 @@ class ViewController: UIViewController {
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
-                // Применяем header к данной секции
+                // Header for section
                 section.boundarySupplementaryItems = [headerItem]
                 return section
 
@@ -122,10 +122,10 @@ class ViewController: UIViewController {
         return layout
     }
     
-    // MARK: - Инициализируем dataSource
+    // MARK: - DataSource
     func configureDataSource() {
         dataSource = .init(collectionView: collectionView, cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
-            // Определяем секцию и затем конфигурируем ячейку для нее
+            // Set and configure section
             let section = self.sections[indexPath.section]
             switch section {
             case .promoted:
@@ -142,11 +142,10 @@ class ViewController: UIViewController {
                 let isLastItem = collectionView.numberOfItems(inSection: indexPath.section) == indexPath.row + 1
                 cell.configureCell(item.category!, hideBottomLine: isLastItem)
                 return cell
-
             }
         })
         
-        // MARK: Создаем Supplementary View Provider
+        // MARK: Creating Supplementary View Provider
         dataSource.supplementaryViewProvider = { collectionView, kind, indexPath -> UICollectionReusableView? in
             switch kind {
             // Настраиваем HeaderView
@@ -165,7 +164,7 @@ class ViewController: UIViewController {
                 }
                 headerView.setTitle(sectionName)
                 return headerView
-            // Настраиваем LineView
+            // Congiguring LineView
             case SupplementaryViewKind.topLine,
                  SupplementaryViewKind.bottomLine:
                 let lineView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: LineView.reuseIdentifier, for: indexPath) as! LineView
@@ -176,12 +175,12 @@ class ViewController: UIViewController {
             }
         }
         
-        // MARK: Определяем Snapshot
+        // MARK: Snapshot
         var snapshot = NSDiffableDataSourceSnapshot<Section,Item>()
-        // для promoted
+        // for promoted
         snapshot.appendSections([.promoted])
         snapshot.appendItems(Item.promotedApps, toSection: .promoted)
-        // для остальных
+        // for others
         let popularSection = Section.standard("Popular this week")
         let essentialSection = Section.standard("Essential Picks")
         let categoriesSection = Section.categories
@@ -201,14 +200,14 @@ class ViewController: UIViewController {
 
 
 extension ViewController {
-    // Виды Секций (section kind)
+    // Section kinds
     enum Section: Hashable {
         case promoted
         case standard(String)
         case categories
     }
     
-    // Виды SupplementaryView (kind)
+    // SupplementaryView kinds
     enum SupplementaryViewKind {
         static let header = "header"
         static let topLine = "topline"
