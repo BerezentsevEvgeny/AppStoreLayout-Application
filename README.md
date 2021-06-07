@@ -1,2 +1,2 @@
 # AppStoreLayout-Application
-Работа с Advanced CompositionalLayout
+Работа с Advanced CompositionalLayout .
